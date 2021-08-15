@@ -10,7 +10,7 @@ COPY src ./src
 RUN yarn install
 RUN yarn build
 
-COPY . .
+COPY public ./public
 
 EXPOSE 3111
 
