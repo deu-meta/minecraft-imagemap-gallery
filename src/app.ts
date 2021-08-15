@@ -22,10 +22,6 @@ app.use('/api/images', imagesRouter);
 	['IMAGE_DIRECTORY', IMAGE_DIRECTORY],
 ].forEach(([name, value]) => console.log(`${name}=${value}`));
 
-app.get('/', (req: Request, res: Response) => {
-	res.send('This is root page of image-upload-server. use /api/images');
-});
-
 const server = app.listen(PORT, () => {
 	console.log(`Listening on port ${PORT}`);
 });
