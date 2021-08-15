@@ -118,5 +118,5 @@ dist
 .pnp.*
 
 # ignore images folder and resolver
-images
-image-name-resolver.json
+/images
+/image-name-resolver.json
