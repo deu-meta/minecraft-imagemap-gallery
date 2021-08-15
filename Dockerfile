@@ -12,6 +12,6 @@ RUN yarn build
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 3111
 
 CMD ["node", "./dist/app.js"]
