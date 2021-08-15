@@ -26,6 +26,17 @@ app.get('/', (req: Request, res: Response) => {
 	res.send('This is root page of image-upload-server. use /api/images');
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
 	console.log(`Listening on port ${PORT}`);
+});
+
+// implement graceful stop
+process.on('SIGTERM', () => {
+	console.log('SIGTERM received. do shutdown');
+
+	server.close(() => {
+		console.log('server closed');
+
+		process.exit(0);
+	});
 });
