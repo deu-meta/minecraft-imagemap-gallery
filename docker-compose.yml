@@ -1,0 +1,12 @@
+version: '3'
+services:
+    minecraft-imagemap-gallery:
+        container_name: minecraft-imagemap-gallery
+        image: solo5star/minecraft-imagemap-gallery
+        restart: unless-stopped
+        ports:
+            - 3000:3000
+        volumes:
+            - ./images:/images
+        environment:
+            - IMAGE_DIRECTORY=/images
