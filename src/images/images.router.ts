@@ -29,8 +29,8 @@ export const imagesRouter = Router();
 
 reloadImages();
 
-fs.watch(IMAGE_DIRECTORY, () => {
-	console.log('something change happened on image directory. rebuild image list ...');
+fs.watch(IMAGE_DIRECTORY, (eventType, filename) => {
+	console.log(`something change happened (event: ${eventType}, filename: ${filename}) on image directory. rebuild image list ...`);
 	reloadImages();
 });
 
