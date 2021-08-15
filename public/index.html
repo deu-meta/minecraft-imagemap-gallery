@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+		<title>DEU Images</title>
+
+		<!-- bootstrap-5.1.0.css -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+			crossorigin="anonymous"
+		/>
+
+		<!-- bootstrap-5.1.0.js -->
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+			crossorigin="anonymous"
+		></script>
+
+		<style>
+			body {
+				background-color: hsl(222, 25%, 15%);
+				color: white;
+			}
+
+			.image {
+				margin-bottom: 2rem;
+			}
+
+			.description-body {
+				background-color: hsl(222, 35%, 10%);
+				padding: 0.8rem;
+			}
+
+			.description-body > ul {
+				list-style: none;
+				padding: unset;
+				margin: unset;
+			}
+
+			.description-body .title {
+				margin: unset;
+				font-size: 1rem;
+				font-weight: bold;
+			}
+
+			.description-body .description {
+				margin: unset;
+				opacity: 0.7;
+				font-size: 0.7rem;
+			}
+
+			.description-body pre {
+				padding: 0.5rem;
+				background-color: hsl(222, 35%, 4%);
+				white-space: pre-wrap;
+			}
+
+			.modal-content {
+				background-color: hsl(222, 25%, 15%);
+			}
+
+			.modal-footer {
+				border: none;
+			}
+
+			.modal-content input {
+				background-color: hsl(222, 35%, 4%);
+				color: white;
+				padding: 0.4rem;
+				border: none;
+			}
+		</style>
+
+		<script type="text/javascript">
+			async function loadImages() {
+				const images = await (await fetch('/api/images')).json();
+
+				const cols = document.querySelectorAll('#gallery > .col');
+				let col = 0;
+
+				images.forEach(image => (image.mtime = new Date(image.mtime)));
+
+				images.sort((a, b) => b.mtime - a.mtime);
+
+				images.forEach(({ name, filename, width, height }) => {
+					cols[col].innerHTML += `
+						<div class="image">
+							<a href="/images/${filename}">
+								<img alt="${filename}" src="/images/${filename}" width="100%" />
+							</a>
+							<div class="description-body">
+								<h1 class="title">${name}</h1>
+								<div style="height: 0.3rem"></div>
+								<p class="description">사이즈: ${width}×${height}</p>
+								<div style="height: 0.8rem"></div>
+								
+								<div style="overflow-x: auto">
+									${Array(Math.ceil(height / 128))
+										.fill(0)
+										.map(
+											_ => `
+										<div style="padding: 0; margin: 0; line-height: 0px; white-space: nowrap">
+											${Array(Math.ceil(width / 128))
+												.fill(0)
+												.map(_ => `<img src="/assets/images/itemframe.png" width="20px" height="20px" />`)
+												.join('')}
+										</div>
+									`,
+										)
+										.join('')}
+								</div>
+
+								<div style="height: 0.8rem"></div>
+								<pre class="description">/imagemap place ${filename} true true</pre>
+							</div>
+						</div>
+					`;
+
+					col = (col + 1) % cols.length;
+				});
+			}
+
+			loadImages();
+
+			function onFileChange(file) {
+				document.getElementById('upload').submit();
+			}
+
+			// function openPasswordModal() {
+			// 	const modal = new bootstrap.Modal(document.getElementById('password-modal'), {});
+			// 	modal.show();
+			// }
+
+			// function onFillPassword(password) {
+			// 	document.getElementById('password').value = password;
+			// 	document.getElementById('upload').submit();
+			// }
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<div style="margin-top: 6rem; margin-bottom: 2rem">
+				<h1 class="display-4 text-center">DEU Image Map Gallery</h1>
+				<div style="height: 0.8rem"></div>
+				<h5 class="text-center text-secondary">동의대학교 마인크래프트 크루 지도 이미지 서버입니다.</h5>
+			</div>
+
+			<div class="my-4 d-flex flex-column align-items-center">
+				<form id="upload" method="post" action="/api/images/upload" enctype="multipart/form-data">
+					<input id="password" type="password" name="password" hidden />
+					<input
+						id="image-upload"
+						type="file"
+						name="image"
+						accept="image/png, image/jpeg"
+						hidden
+						onchange="onFileChange(this.files[0])"
+					/>
+					<button type="button" class="btn btn-primary" onclick="document.getElementById('image-upload').click()">업로드</button>
+				</form>
+			</div>
+
+			<div id="gallery" class="row row-cols-4">
+				<div class="col"></div>
+				<div class="col"></div>
+				<div class="col"></div>
+				<div class="col"></div>
+			</div>
+		</div>
+
+		<div id="password-modal" class="modal" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-body p-4">
+						<div class="d-flex align-items-center">
+							<h6 style="margin: 0">패스워드</h6>
+							<div style="width: 1rem"></div>
+							<input id="password-modal-input" class="flex-grow-1" type="password" />
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-primary"
+							onclick="onFillPassword(document.getElementById('password-modal-input').value)"
+						>
+							확인
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

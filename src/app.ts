@@ -1,0 +1,31 @@
+import { IMAGE_DIRECTORY, PORT } from './env';
+import express, { Application, Request, Response } from 'express';
+import * as dotenv from 'dotenv';
+import helmet from 'helmet';
+import { imagesRouter } from './images/images.router';
+
+dotenv.config();
+
+const app: Application = express();
+// app.use(
+// 	helmet({
+// 		contentSecurityPolicy: false,
+// 	}),
+// );
+app.use(express.urlencoded({ extended: false }));
+app.use('/', express.static('public'));
+app.use('/images', express.static(IMAGE_DIRECTORY));
+app.use('/api/images', imagesRouter);
+
+[
+	['PORT', PORT],
+	['IMAGE_DIRECTORY', IMAGE_DIRECTORY],
+].forEach(([name, value]) => console.log(`${name}=${value}`));
+
+app.get('/', (req: Request, res: Response) => {
+	res.send('This is root page of image-upload-server. use /api/images');
+});
+
+app.listen(PORT, () => {
+	console.log(`Listening on port ${PORT}`);
+});
