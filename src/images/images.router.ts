@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import path from 'path';
+import fs from 'fs';
 import multer from 'multer';
 import { nanoid } from 'nanoid';
 import { IMAGE_DIRECTORY } from '../env';
@@ -28,12 +29,15 @@ export const imagesRouter = Router();
 
 reloadImages();
 
+fs.watch(IMAGE_DIRECTORY, () => {
+	console.log('something change happened on image directory. rebuild image list ...');
+	reloadImages();
+});
+
 imagesRouter.get('/', async (req: Request, res: Response) => {
 	res.status(200).send(Object.values(images));
 });
 
 imagesRouter.post('/upload', upload.single('image'), async (req: Request, res: Response) => {
-	await reloadImages();
-
 	return res.redirect('/');
 });
