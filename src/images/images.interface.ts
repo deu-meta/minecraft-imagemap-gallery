@@ -16,12 +16,13 @@ export interface Images {
 
 export let images: Images = {};
 
-const imageNameResolver: Record<string, string> = {};
+let imageNameResolver: Record<string, string> = {};
 
 export async function reloadImages() {
 	try {
+		images = {};
 		try {
-			Object.assign(imageNameResolver, JSON.parse(await readFile('./image-name-resolver.json', 'utf-8')));
+			imageNameResolver = JSON.parse(await readFile('./image-name-resolver.json', 'utf-8'));
 		} catch (e) {}
 
 		const filenames = await (
