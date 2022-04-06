@@ -1,6 +1,6 @@
 pipeline {
     environment {
-        imagename = 'registry.oasis-deu.xyz/metaland-accounts'
+        imagename = 'registry.oasis-deu.xyz/minecraft-imagemap-gallery'
         dockerImage = ''
     }
     agent any
